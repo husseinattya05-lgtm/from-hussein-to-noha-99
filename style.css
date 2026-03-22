@@ -1,62 +1,65 @@
 body, html {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  margin:0; padding:0;
+  overflow:hidden;
   font-family: Arial, sans-serif;
-  background: url('https://images.unsplash.com/photo-1612831667490-9326b6a0db97?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-  background-size: cover;
+  background:black;
+  color:white;
 }
 
 .scene {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
+  width:100%; height:100vh;
+  position:relative;
+  overflow:hidden;
 }
 
 .particle {
-  position: absolute;
-  font-size: 35px;
-  cursor: default;
-  user-select: none;
-  transition: transform 0.1s ease-out;
-}
-
-.particle.active {
-  cursor: pointer;
-  transform: scale(1.2);
+  position:absolute;
+  font-size:35px;
+  user-select:none;
+  cursor:pointer;
 }
 
 .overlay {
-  position: absolute;
+  position:absolute;
   top:0; left:0;
-  width: 100%;
-  height:100%;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 2rem;
-  text-align: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+  width:100%; height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  pointer-events:none;
 }
 
-.overlay.show {
-  opacity: 1;
-  pointer-events: all;
+.overlay-message {
+  font-size:2rem;
+  max-width:80%;
+  opacity:0;
+  transition:opacity 0.5s ease;
 }
 
-.next-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  background: #06f;
-  color: white;
+/* Visual effects */
+.wolf-effect { text-shadow:0 0 10px grey,0 0 20px grey; animation:wolf-glow 1s infinite alternate; }
+@keyframes wolf-glow {0%{text-shadow:0 0 10px grey,0 0 20px grey} 100%{text-shadow:0 0 20px white,0 0 40px grey}}
+
+.peace-effect { animation: wave 3s infinite; }
+@keyframes wave {0%{text-shadow:0 0 5px #0ff;} 50%{text-shadow:0 0 20px #0ff;} 100%{text-shadow:0 0 5px #0ff;}}
+
+.fire-effect { animation: flicker 0.1s infinite alternate; color:orange; }
+@keyframes flicker {0%{text-shadow:0 0 5px orange;} 50%{text-shadow:0 0 20px red;} 100%{text-shadow:0 0 10px yellow;}}
+
+.bounce-effect { animation: bounce 0.5s ease infinite alternate; }
+@keyframes bounce {0%{transform:translateY(0);} 100%{transform:translateY(-15px);}}
+
+.spin-effect { animation: spin 1s linear infinite; }
+@keyframes spin {0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
+
+.final-effect { animation:pulse 0.8s infinite alternate; color:#ff0; font-weight:bold; font-size:2.5rem;}
+@keyframes pulse {0%{transform:scale(1);} 100%{transform:scale(1.2);}}
+
+/* Tutorial */
+.tutorial { 
+  position:absolute; top:0; left:0; width:100%; height:100%; 
+  background: rgba(0,0,0,0.85); display:flex; flex-direction:column; justify-content:center; align-items:center;
+  text-align:center; color:white; font-size:1.5rem;
 }
+.start-btn { margin-top:20px; padding:10px 20px; font-size:1.2rem; cursor:pointer; border:none; border-radius:10px; background:#06f; color:white; }
