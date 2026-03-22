@@ -8,18 +8,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
     {emoji:'🐺', text:"You're strong-minded and smart like a wolf 🐺", effect:'wolf-effect'},
     {emoji:'😌', text:"You give me peace and comfort 😌", effect:'peace-effect'},
     {emoji:'🔥', text:"You're pure excitement 🔥", effect:'fire-effect'},
-    {emoji:'😸', text:"انتي بتتنمري عمتا 😸", effect:'bounce-effect'},
-    {emoji:'🙄', text:"When you sing and I understand nothing 🙄", effect:'spin-effect'},
+    {emoji:'😸', text:"انتي وانتي بتتنمري 😸", effect:'bounce-effect'},
+    {emoji:'🙄', text:"When you sing and I understand nothing 🙄", effect:'shake-effect'},
     {emoji:'❤️', text:"Honestly... my whole day changes just from the little time I spend with you ❤️", effect:'final-effect'}
   ];
 
   let particles = [];
   let currentIndex = 0;
-  let animating = false;
 
   // ابدأ اللعبة مباشرة
   showNextMessage();
-  animating = true;
   animateParticles();
 
   function initParticles(){

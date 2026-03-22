@@ -20,7 +20,7 @@ body, html {
   transition: transform 0.3s, opacity 0.3s;
 }
 
-/* النوع النشط يلمع */
+/* النسخة النشطة تلمع */
 .active-glow {
   animation: glow 1s infinite alternate;
 }
@@ -62,8 +62,14 @@ body, html {
 .bounce-effect { animation: bounce 0.5s ease infinite alternate; }
 @keyframes bounce {0%{transform:translateY(0);} 100%{transform:translateY(-15px);}}
 
-.spin-effect { animation: spin 1s linear infinite; }
-@keyframes spin {0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
+.shake-effect { animation: shake 0.5s infinite; }
+@keyframes shake {
+  0% { transform: translate(0,0) rotate(0deg); }
+  25% { transform: translate(-5px,0) rotate(-5deg); }
+  50% { transform: translate(5px,0) rotate(5deg); }
+  75% { transform: translate(-5px,0) rotate(-5deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
 
 .final-effect { animation:pulse 0.8s infinite alternate; color:#ff0; font-weight:bold; font-size:2.5rem;}
 @keyframes pulse {0%{transform:scale(1);} 100%{transform:scale(1.2);}}
