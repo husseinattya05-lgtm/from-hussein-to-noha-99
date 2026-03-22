@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const scene = document.querySelector('.scene');
   const overlay = document.querySelector('.overlay');
   const overlayMessage = document.querySelector('.overlay-message');
-  const tutorial = document.querySelector('.tutorial');
-  const startBtn = document.querySelector('.start-btn');
 
   const messages = [
     {emoji:'🐺', text:"You're strong-minded and smart like a wolf 🐺", effect:'wolf-effect'},
@@ -19,15 +17,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
   let currentIndex = 0;
   let animating = false;
 
-  startBtn.addEventListener('click', ()=>{
-    tutorial.style.display='none';
-    currentIndex = 0;
-    showNextMessage();
-    if(!animating){
-      animating = true;
-      animateParticles();
-    }
-  });
+  // ابدأ اللعبة مباشرة
+  showNextMessage();
+  animating = true;
+  animateParticles();
 
   function initParticles(){
     const type = messages[currentIndex];
@@ -40,6 +33,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       el.y = Math.random()*window.innerHeight;
       el.vx = (Math.random()-0.5)*2;
       el.vy = (Math.random()-0.5)*2;
+      if(i===0) el.classList.add('active-glow'); // أول نسخة للنشاط
       el.addEventListener('click', ()=>handleClick(el));
       scene.appendChild(el);
       particles.push(el);
@@ -47,13 +41,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function handleClick(el){
-    if(el.dataset.active !== "true") return;
+    if(el.dataset.active!=="true") return;
     el.dataset.active="false";
-    el.style.transform += " scale(1.5)";
+    el.style.transform+=" scale(1.5)";
     el.style.opacity="0";
     setTimeout(()=>el.remove(),300);
 
-    if(particles.every(p=>p.dataset.active==="false")){
+    // تحديث glow للنسخ المتبقية
+    const activeParticles = particles.filter(p=>p.dataset.active==="true");
+    activeParticles.forEach(p=>p.classList.remove('active-glow'));
+    if(activeParticles[0]) activeParticles[0].classList.add('active-glow');
+
+    if(activeParticles.length===0){
       showOverlay();
     }
   }
