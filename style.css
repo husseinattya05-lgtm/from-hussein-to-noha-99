@@ -3,7 +3,7 @@ body, html {
   padding: 0;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #a0e9ff, #ffffff);
+  background: linear-gradient(to bottom, #87CEEB, #E0FFFF); /* sky blue + light aqua */
 }
 
 .scene {
@@ -43,7 +43,6 @@ body, html {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s;
-  border-radius: 0;
 }
 
 .overlay.show {

@@ -15,19 +15,17 @@ const finalMessage = "Honestly... my whole day changes just from the little time
 
 let particles = [];
 let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
-let isPressed = false; // tracks mouse/touch press
+let isPressed = false;
 
 let currentTypeIndex = 0;
-let currentActiveIndex = 0;
 
-// Track mouse
 window.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; });
 window.addEventListener('mousedown', ()=>{ isPressed = true; });
 window.addEventListener('mouseup', ()=>{ isPressed = false; });
 window.addEventListener('touchstart', ()=>{ isPressed = true; });
 window.addEventListener('touchend', ()=>{ isPressed = false; });
 
-// Create 10 particles per emoji type
+// Create 10 particles per type
 emojiTypes.forEach(type=>{
   type.particles = [];
   for(let i=0;i<10;i++){
@@ -46,62 +44,43 @@ emojiTypes.forEach(type=>{
   }
 });
 
-// Set the active particle
-function setActiveParticle(){
-  const type = emojiTypes[currentTypeIndex];
-  if(!type || type.particles.length === 0){
-    overlayMessage.textContent = finalMessage;
-    overlay.classList.add('show');
-    nextBtn.style.display = 'none';
-    return;
-  }
-  type.particles.forEach(p=>p.classList.remove('active'));
-  type.particles[currentActiveIndex].classList.add('active');
+function checkAllCollected(type){
+  // Check if all particles are near center
+  return type.particles.every(p=>{
+    const dx = p.x - window.innerWidth/2;
+    const dy = p.y - window.innerHeight/2;
+    return Math.sqrt(dx*dx + dy*dy) < 50;
+  });
 }
 
-// Next button click
 nextBtn.addEventListener('click', ()=>{
   const type = emojiTypes[currentTypeIndex];
-  const p = type.particles[currentActiveIndex];
-  p.remove();
-  type.particles.splice(currentActiveIndex,1);
-
-  if(type.particles.length === 0){
-    currentTypeIndex++;
-    currentActiveIndex = 0;
-  }
-  setActiveParticle();
-  overlay.classList.remove('show');
-});
-
-// Click listener for active particle
-scene.addEventListener('click', e=>{
-  const type = emojiTypes[currentTypeIndex];
-  const active = type ? type.particles[currentActiveIndex] : null;
-  if(active && e.target === active){
-    overlayMessage.textContent = type.message;
-    overlay.classList.add('show');
+  // Remove all particles of current type
+  type.particles.forEach(p=>p.remove());
+  currentTypeIndex++;
+  if(currentTypeIndex >= emojiTypes.length){
+    overlayMessage.textContent = finalMessage;
+    nextBtn.style.display = 'none';
+  } else {
+    overlay.classList.remove('show');
   }
 });
 
-// Animate function
 function animate(){
   particles.forEach(p=>{
     p.x += p.vx;
     p.y += p.vy;
 
-    // bounce edges
-    if(p.x < 0 || p.x > window.innerWidth-50) p.vx *= -1;
-    if(p.y < 0 || p.y > window.innerHeight-50) p.vy *= -1;
+    if(p.x<0 || p.x>window.innerWidth-50) p.vx*=-1;
+    if(p.y<0 || p.y>window.innerHeight-50) p.vy*=-1;
 
-    // Magnet effect ONLY for current active particle when pressed
     const type = emojiTypes[currentTypeIndex];
-    const active = type ? type.particles[currentActiveIndex] : null;
-    if(active === p && isPressed){
-      let dx = mouse.x - p.x;
-      let dy = mouse.y - p.y;
-      p.vx += dx*0.05;
-      p.vy += dy*0.05;
+    if(type.particles.includes(p) && isPressed){
+      // magnet towards center
+      const dx = window.innerWidth/2 - p.x;
+      const dy = window.innerHeight/2 - p.y;
+      p.vx += dx*0.02;
+      p.vy += dy*0.02;
       p.vx *= 0.9;
       p.vy *= 0.9;
     }
@@ -109,9 +88,14 @@ function animate(){
     p.style.transform = `translate(${p.x}px, ${p.y}px)`;
   });
 
+  // check if all collected
+  const type = emojiTypes[currentTypeIndex];
+  if(type && checkAllCollected(type)){
+    overlayMessage.textContent = type.message;
+    overlay.classList.add('show');
+  }
+
   requestAnimationFrame(animate);
 }
 
-// Start
-setActiveParticle();
 animate();
