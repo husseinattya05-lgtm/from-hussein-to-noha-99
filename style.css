@@ -20,7 +20,6 @@ body, html {
   transition: transform 0.3s, opacity 0.3s;
 }
 
-/* Overlay for messages */
 .overlay {
   position:absolute;
   top:0; left:0;
@@ -39,7 +38,6 @@ body, html {
   transition:opacity 0.5s ease;
 }
 
-/* Effects */
 .wolf-effect { text-shadow:0 0 10px grey,0 0 20px grey; animation:wolf-glow 1s infinite alternate; }
 @keyframes wolf-glow {0%{text-shadow:0 0 10px grey,0 0 20px grey} 100%{text-shadow:0 0 20px white,0 0 40px grey}}
 
