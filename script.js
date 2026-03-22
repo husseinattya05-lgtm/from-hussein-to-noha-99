@@ -3,7 +3,6 @@ const overlay = document.querySelector('.overlay');
 const overlayMessage = document.querySelector('.overlay-message');
 const nextBtn = document.querySelector('.next-btn');
 
-// Emoji types + messages
 const emojiTypes = [
   {emoji:'🐺', message:"You're strong-minded and smart like a wolf 🐺"},
   {emoji:'😌', message:"You give me peace and comfort 😌"},
@@ -16,15 +15,17 @@ const finalMessage = "Honestly... my whole day changes just from the little time
 
 let particles = [];
 let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+let isPressed = false; // tracks mouse/touch press
 
 let currentTypeIndex = 0;
 let currentActiveIndex = 0;
 
 // Track mouse
-window.addEventListener('mousemove', e=>{
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
+window.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mousedown', ()=>{ isPressed = true; });
+window.addEventListener('mouseup', ()=>{ isPressed = false; });
+window.addEventListener('touchstart', ()=>{ isPressed = true; });
+window.addEventListener('touchend', ()=>{ isPressed = false; });
 
 // Create 10 particles per emoji type
 emojiTypes.forEach(type=>{
@@ -89,21 +90,19 @@ function animate(){
     p.x += p.vx;
     p.y += p.vy;
 
+    // bounce edges
     if(p.x < 0 || p.x > window.innerWidth-50) p.vx *= -1;
     if(p.y < 0 || p.y > window.innerHeight-50) p.vy *= -1;
 
-    // Magnet effect ONLY for current active particle
+    // Magnet effect ONLY for current active particle when pressed
     const type = emojiTypes[currentTypeIndex];
     const active = type ? type.particles[currentActiveIndex] : null;
-    if(active === p){
+    if(active === p && isPressed){
       let dx = mouse.x - p.x;
       let dy = mouse.y - p.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist < 200){ // نطاق واضح
-        p.vx += dx*0.05; 
-        p.vy += dy*0.05;
-      }
-      p.vx *= 0.9; // smooth
+      p.vx += dx*0.05;
+      p.vy += dy*0.05;
+      p.vx *= 0.9;
       p.vy *= 0.9;
     }
 
@@ -113,6 +112,6 @@ function animate(){
   requestAnimationFrame(animate);
 }
 
-// Start game
+// Start
 setActiveParticle();
 animate();
