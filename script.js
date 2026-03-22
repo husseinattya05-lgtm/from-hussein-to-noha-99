@@ -3,7 +3,7 @@ const overlay = document.querySelector('.overlay');
 const overlayMessage = document.querySelector('.overlay-message');
 const nextBtn = document.querySelector('.next-btn');
 
-// Define emoji types and messages
+// Emoji types + messages
 const emojiTypes = [
   {emoji:'🐺', message:"You're strong-minded and smart like a wolf 🐺"},
   {emoji:'😌', message:"You give me peace and comfort 😌"},
@@ -18,7 +18,7 @@ let particles = [];
 let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
 
 let currentTypeIndex = 0;
-let currentActiveIndex = 0; // index of active particle in current type
+let currentActiveIndex = 0;
 
 // Track mouse
 window.addEventListener('mousemove', e=>{
@@ -27,7 +27,7 @@ window.addEventListener('mousemove', e=>{
 });
 
 // Create 10 particles per emoji type
-emojiTypes.forEach((type, typeIdx)=>{
+emojiTypes.forEach(type=>{
   type.particles = [];
   for(let i=0;i<10;i++){
     const el = document.createElement('div');
@@ -42,38 +42,45 @@ emojiTypes.forEach((type, typeIdx)=>{
     scene.appendChild(el);
     particles.push(el);
     type.particles.push(el);
-
-    el.addEventListener('click', ()=>{
-      if(typeIdx === currentTypeIndex && el === type.particles[currentActiveIndex]){
-        overlayMessage.textContent = type.message;
-        overlay.classList.add('show');
-      }
-    });
   }
 });
 
-function nextActive(){
-  const currentType = emojiTypes[currentTypeIndex];
-  currentActiveIndex++;
-  if(currentActiveIndex >= currentType.particles.length){
-    currentTypeIndex++;
-    currentActiveIndex = 0;
-    if(currentTypeIndex >= emojiTypes.length){
-      overlayMessage.textContent = finalMessage;
-      overlay.classList.add('show');
-      nextBtn.style.display = 'none';
-      return;
-    }
+// Set the first active particle
+function setActiveParticle(){
+  const type = emojiTypes[currentTypeIndex];
+  if(!type || type.particles.length===0){
+    overlayMessage.textContent = finalMessage;
+    overlay.classList.add('show');
+    nextBtn.style.display = 'none';
+    return;
   }
+  type.particles.forEach(p=>p.classList.remove('active'));
+  type.particles[currentActiveIndex].classList.add('active');
 }
 
-// Next button
+// Next button click
 nextBtn.addEventListener('click', ()=>{
-  const currentType = emojiTypes[currentTypeIndex];
-  const currentParticle = currentType.particles[currentActiveIndex];
-  currentParticle.remove();
+  const type = emojiTypes[currentTypeIndex];
+  const p = type.particles[currentActiveIndex];
+  p.remove();
+  type.particles.splice(currentActiveIndex,1);
+
+  if(type.particles.length === 0){
+    currentTypeIndex++;
+    currentActiveIndex = 0;
+  }
+  setActiveParticle();
   overlay.classList.remove('show');
-  nextActive();
+});
+
+// Click listener for active particle
+scene.addEventListener('click', e=>{
+  const type = emojiTypes[currentTypeIndex];
+  const active = type ? type.particles[currentActiveIndex] : null;
+  if(active && e.target === active){
+    overlayMessage.textContent = type.message;
+    overlay.classList.add('show');
+  }
 });
 
 // Animate function
@@ -82,13 +89,13 @@ function animate(){
     p.x += p.vx;
     p.y += p.vy;
 
-    // bounce edges
     if(p.x < 0 || p.x > window.innerWidth-50) p.vx *= -1;
     if(p.y < 0 || p.y > window.innerHeight-50) p.vy *= -1;
 
-    // Apply magnet only to current active particle
-    const currentType = emojiTypes[currentTypeIndex];
-    if(currentType && currentType.particles[currentActiveIndex] === p){
+    // Magnet effect ONLY for current active particle
+    const type = emojiTypes[currentTypeIndex];
+    const active = type ? type.particles[currentActiveIndex] : null;
+    if(active === p){
       let dx = mouse.x - p.x;
       let dy = mouse.y - p.y;
       let dist = Math.sqrt(dx*dx + dy*dy);
@@ -106,5 +113,6 @@ function animate(){
   requestAnimationFrame(animate);
 }
 
-// Start animation
+// Start game
+setActiveParticle();
 animate();

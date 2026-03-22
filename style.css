@@ -15,9 +15,13 @@ body, html {
 .particle {
   position: absolute;
   font-size: 35px;
-  cursor: pointer;
+  cursor: default; /* فقط النسخة النشطة هي اللي cursor:pointer */
   transition: transform 0.1s ease-out;
   user-select: none;
+}
+
+.particle.active {
+  cursor: pointer;
 }
 
 /* Overlay for message */
