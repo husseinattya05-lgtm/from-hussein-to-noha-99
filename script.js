@@ -15,47 +15,46 @@ const messages = [
 
 let particles = [];
 let currentIndex = 0;
+let animating = false;
 
 startBtn.addEventListener('click', ()=>{
   tutorial.style.display='none';
   nextMessage();
-  animate();
+  if(!animating){
+    animating = true;
+    animate();
+  }
 });
 
-// تهيئة النسخ للنوع الحالي
 function initParticles(){
   const type = messages[currentIndex];
   for(let i=0;i<10;i++){
     const el = document.createElement('div');
     el.className='particle';
-    el.innerText=type.emoji;
-    el.dataset.active = "true"; // النسخ الحالية قابلة للتفاعل
+    el.innerText = type.emoji;
+    el.dataset.active = "true"; // النوع الحالي نشط
     el.x = Math.random()*window.innerWidth;
     el.y = Math.random()*window.innerHeight;
-    el.vx = (Math.random()-0.5)*1.5;
-    el.vy = (Math.random()-0.5)*1.5;
+    el.vx = (Math.random()-0.5)*2;
+    el.vy = (Math.random()-0.5)*2;
     el.addEventListener('click', ()=>handleInteraction(el));
     scene.appendChild(el);
     particles.push(el);
   }
 }
 
-// التفاعل مع النسخ
 function handleInteraction(el){
-  if(el.dataset.active!=="true") return; // غير نشطة
+  if(el.dataset.active!=="true") return;
   el.dataset.active="false";
-  el.style.transition="transform 0.3s, opacity 0.3s";
   el.style.transform+=" scale(1.5)";
   el.style.opacity="0";
   setTimeout(()=>el.remove(),300);
 
-  // تحقق إذا انتهت جميع النسخ
   if(particles.every(p=>p.dataset.active==="false")){
     showOverlay();
   }
 }
 
-// Typing effect
 function typeMessage(text, element, callback){
   element.textContent='';
   let i=0;
@@ -69,7 +68,6 @@ function typeMessage(text, element, callback){
   step();
 }
 
-// عرض الرسالة
 function showOverlay(){
   overlayMessage.className='overlay-message '+messages[currentIndex].effect;
   overlay.classList.add('show');
@@ -84,15 +82,12 @@ function showOverlay(){
   });
 }
 
-// الانتقال للنوع التالي
 function nextMessage(){
-  // إزالة أي نسخ قديمة
   particles.forEach(p=>p.remove());
-  particles=[];
+  particles = [];
   initParticles();
 }
 
-// تحريك النسخ
 function animate(){
   particles.forEach(p=>{
     p.x += p.vx;
