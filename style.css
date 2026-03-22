@@ -38,6 +38,7 @@ body, html {
   transition:opacity 0.5s ease;
 }
 
+/* Effects for messages */
 .wolf-effect { text-shadow:0 0 10px grey,0 0 20px grey; animation:wolf-glow 1s infinite alternate; }
 @keyframes wolf-glow {0%{text-shadow:0 0 10px grey,0 0 20px grey} 100%{text-shadow:0 0 20px white,0 0 40px grey}}
 

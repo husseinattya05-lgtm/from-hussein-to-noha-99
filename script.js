@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', ()=>{
+
   const scene = document.querySelector('.scene');
   const overlay = document.querySelector('.overlay');
   const overlayMessage = document.querySelector('.overlay-message');
@@ -20,11 +21,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   startBtn.addEventListener('click', ()=>{
     tutorial.style.display='none';
-    currentIndex=0;
-    nextMessage();
+    currentIndex = 0;
+    showNextMessage();
     if(!animating){
-      animating=true;
-      animate();
+      animating = true;
+      animateParticles();
     }
   });
 
@@ -39,22 +40,38 @@ document.addEventListener('DOMContentLoaded', ()=>{
       el.y = Math.random()*window.innerHeight;
       el.vx = (Math.random()-0.5)*2;
       el.vy = (Math.random()-0.5)*2;
-      el.addEventListener('click', ()=>handleInteraction(el));
+      el.addEventListener('click', ()=>handleClick(el));
       scene.appendChild(el);
       particles.push(el);
     }
   }
 
-  function handleInteraction(el){
-    if(el.dataset.active!=="true") return;
+  function handleClick(el){
+    if(el.dataset.active !== "true") return;
     el.dataset.active="false";
-    el.style.transform+=" scale(1.5)";
+    el.style.transform += " scale(1.5)";
     el.style.opacity="0";
     setTimeout(()=>el.remove(),300);
 
     if(particles.every(p=>p.dataset.active==="false")){
       showOverlay();
     }
+  }
+
+  function showOverlay(){
+    overlayMessage.className='overlay-message '+messages[currentIndex].effect;
+    overlay.style.pointerEvents="auto";
+    overlayMessage.style.opacity="1";
+    typeMessage(messages[currentIndex].text, overlayMessage, ()=>{
+      setTimeout(()=>{
+        overlayMessage.style.opacity="0";
+        overlay.style.pointerEvents="none";
+        currentIndex++;
+        if(currentIndex < messages.length){
+          showNextMessage();
+        }
+      },1500);
+    });
   }
 
   function typeMessage(text, element, callback){
@@ -70,27 +87,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     step();
   }
 
-  function showOverlay(){
-    overlayMessage.className='overlay-message '+messages[currentIndex].effect;
-    overlay.classList.add('show');
-    typeMessage(messages[currentIndex].text, overlayMessage, ()=>{
-      setTimeout(()=>{
-        overlay.classList.remove('show');
-        currentIndex++;
-        if(currentIndex<messages.length){
-          nextMessage();
-        }
-      },1500);
-    });
-  }
-
-  function nextMessage(){
+  function showNextMessage(){
     particles.forEach(p=>p.remove());
     particles=[];
     initParticles();
   }
 
-  function animate(){
+  function animateParticles(){
     particles.forEach(p=>{
       p.x += p.vx;
       p.y += p.vy;
@@ -98,6 +101,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(p.y<0 || p.y>window.innerHeight-30) p.vy*=-1;
       p.style.transform=`translate(${p.x}px, ${p.y}px)`;
     });
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animateParticles);
   }
+
 });
