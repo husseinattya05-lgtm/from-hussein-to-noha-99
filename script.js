@@ -7,7 +7,7 @@ const emojiTypes = [
   {emoji:'🐺', message:"You're strong-minded and smart like a wolf 🐺"},
   {emoji:'😌', message:"You give me peace and comfort 😌"},
   {emoji:'🔥', message:"You're pure excitement 🔥"},
-  {emoji:'😸', message:"Your playful teasing is something else 😸"},
+  {emoji:'😸', message:"انتي بتتنمري عمتا 😸"},
   {emoji:'🙄', message:"When you sing and I understand nothing 🙄"}
 ];
 
@@ -90,9 +90,13 @@ function animate(){
 
     const type = emojiTypes[currentTypeIndex];
     if(type.particles.includes(p) && isPressed){
-      // Gradual magnet effect with slight delay
-      p.x = lerp(p.x, window.innerWidth/2, 0.05);
-      p.y = lerp(p.y, window.innerHeight/2, 0.05);
+      // Magnet effect like original: accelerate toward mouse
+      const dx = mouse.x - p.x;
+      const dy = mouse.y - p.y;
+      p.vx += dx*0.05;
+      p.vy += dy*0.05;
+      p.vx *= 0.9;
+      p.vy *= 0.9;
     }
 
     p.style.transform = `translate(${p.x}px, ${p.y}px)`;
