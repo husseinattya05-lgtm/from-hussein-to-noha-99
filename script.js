@@ -16,7 +16,6 @@ const finalMessage = "Honestly... my whole day changes just from the little time
 let particles = [];
 let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
 let isPressed = false;
-
 let currentTypeIndex = 0;
 
 window.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; });
@@ -44,8 +43,24 @@ emojiTypes.forEach(type=>{
   }
 });
 
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+// Typing animation
+function typeMessage(text, element, callback){
+  element.textContent = '';
+  let i=0;
+  function step(){
+    if(i<text.length){
+      element.textContent += text[i];
+      i++;
+      setTimeout(step, 40);
+    } else if(callback) callback();
+  }
+  step();
+}
+
+// Check if all collected
 function checkAllCollected(type){
-  // Check if all particles are near center
   return type.particles.every(p=>{
     const dx = p.x - window.innerWidth/2;
     const dy = p.y - window.innerHeight/2;
@@ -55,14 +70,13 @@ function checkAllCollected(type){
 
 nextBtn.addEventListener('click', ()=>{
   const type = emojiTypes[currentTypeIndex];
-  // Remove all particles of current type
   type.particles.forEach(p=>p.remove());
   currentTypeIndex++;
+  overlay.classList.remove('show');
   if(currentTypeIndex >= emojiTypes.length){
     overlayMessage.textContent = finalMessage;
     nextBtn.style.display = 'none';
-  } else {
-    overlay.classList.remove('show');
+    overlay.classList.add('show');
   }
 });
 
@@ -76,23 +90,18 @@ function animate(){
 
     const type = emojiTypes[currentTypeIndex];
     if(type.particles.includes(p) && isPressed){
-      // magnet towards center
-      const dx = window.innerWidth/2 - p.x;
-      const dy = window.innerHeight/2 - p.y;
-      p.vx += dx*0.02;
-      p.vy += dy*0.02;
-      p.vx *= 0.9;
-      p.vy *= 0.9;
+      // Gradual magnet effect with slight delay
+      p.x = lerp(p.x, window.innerWidth/2, 0.05);
+      p.y = lerp(p.y, window.innerHeight/2, 0.05);
     }
 
     p.style.transform = `translate(${p.x}px, ${p.y}px)`;
   });
 
-  // check if all collected
   const type = emojiTypes[currentTypeIndex];
-  if(type && checkAllCollected(type)){
-    overlayMessage.textContent = type.message;
+  if(type && checkAllCollected(type) && !overlay.classList.contains('show')){
     overlay.classList.add('show');
+    typeMessage(type.message, overlayMessage);
   }
 
   requestAnimationFrame(animate);

@@ -3,7 +3,8 @@ body, html {
   padding: 0;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #87CEEB, #E0FFFF); /* sky blue + light aqua */
+  background: url('https://images.unsplash.com/photo-1612831667490-9326b6a0db97?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+  background-size: cover;
 }
 
 .scene {
@@ -17,14 +18,13 @@ body, html {
   position: absolute;
   font-size: 35px;
   cursor: default;
-  transition: transform 0.1s ease-out;
   user-select: none;
+  transition: transform 0.1s ease-out;
 }
 
 .particle.active {
   cursor: pointer;
   transform: scale(1.2);
-  transition: transform 0.1s ease-out;
 }
 
 .overlay {
@@ -42,7 +42,7 @@ body, html {
   text-align: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s ease;
 }
 
 .overlay.show {
