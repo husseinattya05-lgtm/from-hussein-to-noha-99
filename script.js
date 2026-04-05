@@ -1,104 +1,113 @@
-document.addEventListener('DOMContentLoaded', ()=>{
+const video = document.getElementById("video");
+const image = document.getElementById("image");
+const music = document.getElementById("music");
+const notif = document.getElementById("notif");
+const monthText = document.getElementById("monthText");
+const text = document.getElementById("text");
+const startBtn = document.getElementById("startBtn");
 
-  const scene = document.querySelector('.scene');
-  const overlay = document.querySelector('.overlay');
-  const overlayMessage = document.querySelector('.overlay-message');
+let images = [];
+const months = [4,5,6,7,8,9,10,11,12,1,2,3];
 
-  const messages = [
-    {emoji:'🐺', text:"You're strong-minded and smart like a wolf 🐺", effect:'wolf-effect'},
-    {emoji:'😌', text:"You give me peace and comfort 😌", effect:'peace-effect'},
-    {emoji:'🔥', text:"You're pure excitement 🔥", effect:'fire-effect'},
-    {emoji:'😸', text:"انتي وانتي بتتنمري 😸", effect:'bounce-effect'},
-    {emoji:'🙄', text:"When you sing and I understand nothing 🙄", effect:'shake-effect'},
-    {emoji:'❤️', text:"Honestly... my whole day changes just from the little time I spend with you ❤️", effect:'final-effect'}
+months.forEach(month => {
+  for(let i = 1; i <= 20; i++){
+    images.push(`${i}-${month}.jpg`);
+  }
+});
+
+let index = 0;
+
+const monthNames = {
+  4:"April 2025",
+  5:"May 2025",
+  6:"June 2025",
+  7:"July 2025",
+  8:"August 2025",
+  9:"September 2025",
+  10:"October 2025",
+  11:"November 2025",
+  12:"December 2025",
+  1:"January 2026",
+  2:"February 2026",
+  3:"March 2026"
+};
+
+function getSpeed(){
+  if(index < 10) return 1200;
+  if(index < 40) return 250;
+  return 120;
+}
+
+function showEnding(){
+
+  image.src = "images/final.jpg";
+  image.classList.add("show");
+
+  monthText.innerText = "";
+
+  const lines = [
+    "NOHA… it was all worth it 🤍",
+    "and I’d do it all over again 🤍",
+    "still feels like it all just started…"
   ];
 
-  let particles = [];
-  let currentIndex = 0;
+  let i = 0;
 
-  // ابدأ اللعبة مباشرة
-  showNextMessage();
-  animateParticles();
+  function showLine(){
+    if(i >= lines.length) return;
 
-  function initParticles(){
-    const type = messages[currentIndex];
-    for(let i=0;i<10;i++){
-      const el = document.createElement('div');
-      el.className='particle';
-      el.innerText = type.emoji;
-      el.dataset.active="true";
-      el.x = Math.random()*window.innerWidth;
-      el.y = Math.random()*window.innerHeight;
-      el.vx = (Math.random()-0.5)*2;
-      el.vy = (Math.random()-0.5)*2;
-      if(i===0) el.classList.add('active-glow'); // أول نسخة للنشاط
-      el.addEventListener('click', ()=>handleClick(el));
-      scene.appendChild(el);
-      particles.push(el);
-    }
-  }
+    text.innerText = lines[i];
+    text.style.opacity = 1;
 
-  function handleClick(el){
-    if(el.dataset.active!=="true") return;
-    el.dataset.active="false";
-    el.style.transform+=" scale(1.5)";
-    el.style.opacity="0";
-    setTimeout(()=>el.remove(),300);
-
-    // تحديث glow للنسخ المتبقية
-    const activeParticles = particles.filter(p=>p.dataset.active==="true");
-    activeParticles.forEach(p=>p.classList.remove('active-glow'));
-    if(activeParticles[0]) activeParticles[0].classList.add('active-glow');
-
-    if(activeParticles.length===0){
-      showOverlay();
-    }
-  }
-
-  function showOverlay(){
-    overlayMessage.className='overlay-message '+messages[currentIndex].effect;
-    overlay.style.pointerEvents="auto";
-    overlayMessage.style.opacity="1";
-    typeMessage(messages[currentIndex].text, overlayMessage, ()=>{
-      setTimeout(()=>{
-        overlayMessage.style.opacity="0";
-        overlay.style.pointerEvents="none";
-        currentIndex++;
-        if(currentIndex < messages.length){
-          showNextMessage();
-        }
-      },1500);
-    });
-  }
-
-  function typeMessage(text, element, callback){
-    element.textContent='';
-    let i=0;
-    function step(){
-      if(i<text.length){
-        element.textContent += text[i];
+    setTimeout(() => {
+      text.style.opacity = 0;
+      setTimeout(() => {
         i++;
-        setTimeout(step,40);
-      } else if(callback) callback();
-    }
-    step();
+        showLine();
+      }, 800);
+    }, 3000);
   }
 
-  function showNextMessage(){
-    particles.forEach(p=>p.remove());
-    particles=[];
-    initParticles();
+  setTimeout(showLine, 1500);
+}
+
+function showImage(){
+
+  if(index >= images.length){
+    showEnding();
+    return;
   }
 
-  function animateParticles(){
-    particles.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
-      if(p.x<0 || p.x>window.innerWidth-30) p.vx*=-1;
-      if(p.y<0 || p.y>window.innerHeight-30) p.vy*=-1;
-      p.style.transform=`translate(${p.x}px, ${p.y}px)`;
-    });
-    requestAnimationFrame(animateParticles);
-  }
+  const path = "images/" + images[index];
 
-});
+  image.classList.remove("show");
+
+  setTimeout(() => {
+
+    image.src = path;
+    image.classList.add("show");
+
+    const file = images[index].split(".")[0];
+    const month = file.split("-")[1];
+
+    monthText.innerText = monthNames[month] || "";
+
+    notif.currentTime = 0;
+    notif.play().catch(()=>{});
+
+    index++;
+    setTimeout(showImage, getSpeed());
+
+  }, 100);
+}
+
+function start(){
+  video.play().catch(()=>{});
+  music.play().catch(()=>{});
+  showImage();
+}
+
+startBtn.onclick = () => {
+  startBtn.style.display = "none";
+  start();
+};

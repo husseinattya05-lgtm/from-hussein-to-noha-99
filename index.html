@@ -2,18 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Emoji Interaction Game</title>
+<title>Memories 🤍</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="scene"></div>
+<button id="startBtn">Start</button>
 
-<div class="overlay">
-  <div class="overlay-message"></div>
+<video id="video" muted autoplay loop playsinline>
+  <source src="video/video.mp4" type="video/mp4">
+</video>
+
+<div id="monthText"></div>
+<div id="text"></div>
+
+<div id="imageLayer">
+  <img id="image" src="">
 </div>
 
+<audio id="music" src="audio/music.mp3"></audio>
+<audio id="notif" src="audio/notif.mp3"></audio>
+
 <script src="script.js"></script>
+
 </body>
 </html>
