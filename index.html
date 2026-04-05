@@ -3,206 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Memories 🤍</title>
-
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  background: black;
-}
-
-#startScreen {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-#startBtn {
-  padding: 15px 30px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-#video {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: none;
-}
-
-#imageLayer {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#image {
-  width: 45vw;
-  max-width: 600px;
-  border-radius: 15px;
-  opacity: 0;
-  transition: 0.5s;
-}
-
-.show {
-  opacity: 1;
-}
-
-#monthText {
-  position: fixed;
-  top: 20px;
-  width: 100%;
-  text-align: center;
-  color: white;
-  font-size: 22px;
-}
-
-#text {
-  position: fixed;
-  top: 70px;
-  width: 100%;
-  text-align: center;
-  color: white;
-  font-size: 28px;
-  opacity: 0;
-  transition: 1s;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="startScreen">
-  <button id="startBtn">Start</button>
-</div>
+<button id="startBtn">Start</button>
 
-<video id="video" muted loop playsinline>
-  <source src="video.mp4" type="video/mp4">
+<!-- 🎬 الفيديو -->
+<video id="video" muted autoplay loop playsinline preload="auto">
+  <source src="./video.mp4" type="video/mp4">
 </video>
 
+<!-- النص -->
 <div id="monthText"></div>
 <div id="text"></div>
 
+<!-- الصور -->
 <div id="imageLayer">
-  <img id="image">
+  <img id="image" src="">
 </div>
 
-<audio id="music" src="music.mp3"></audio>
-<audio id="notif" src="notif.mp3"></audio>
+<!-- الصوت -->
+<audio id="music" src="./music.mp3"></audio>
+<audio id="notif" src="./notif.mp3"></audio>
 
-<script>
-
-const video = document.getElementById("video");
-const image = document.getElementById("image");
-const music = document.getElementById("music");
-const notif = document.getElementById("notif");
-const monthText = document.getElementById("monthText");
-const text = document.getElementById("text");
-const startBtn = document.getElementById("startBtn");
-const startScreen = document.getElementById("startScreen");
-
-/* 💣 صورك حسب كلامك (i-month) */
-let images = [];
-const months = [4,5,6,7,8,9,10,11,12,1,2,3];
-
-months.forEach(month => {
-  for(let i = 1; i <= 20; i++){
-    images.push(`${i}-${month}.jpg`);
-  }
-});
-
-let index = 0;
-
-/* أسماء الشهور */
-const monthNames = {
-  4:"April 2025",5:"May 2025",6:"June 2025",7:"July 2025",
-  8:"August 2025",9:"September 2025",10:"October 2025",
-  11:"November 2025",12:"December 2025",
-  1:"January 2026",2:"February 2026",3:"March 2026"
-};
-
-/* عرض الصور */
-function showImage(){
-
-  if(index >= images.length){
-    showEnding();
-    return;
-  }
-
-  const path = images[index];
-
-  console.log("Trying:", path); // 👈 مهم
-
-  const temp = new Image();
-
-  temp.onload = () => {
-
-    image.src = path;
-    image.classList.add("show");
-
-    const month = path.split("-")[1].split(".")[0];
-    monthText.innerText = monthNames[month] || "";
-
-    notif.currentTime = 0;
-    notif.play().catch(()=>{});
-
-    index++;
-    setTimeout(showImage, 300);
-  };
-
-  temp.onerror = () => {
-    console.log("❌ NOT FOUND:", path);
-    index++;
-    showImage();
-  };
-
-  temp.src = path;
-}
-
-/* النهاية */
-function showEnding(){
-
-  console.log("Trying final.jpg");
-
-  const temp = new Image();
-
-  temp.onload = () => {
-    image.src = "final.jpg";
-    image.classList.add("show");
-  };
-
-  temp.onerror = () => {
-    console.log("❌ final.jpg مش موجود");
-  };
-
-  temp.src = "final.jpg";
-}
-
-/* تشغيل */
-function start(){
-
-  startScreen.style.display = "none";
-
-  video.style.display = "block";
-  video.play().catch(()=>{});
-
-  music.play().catch(()=>{});
-
-  showImage();
-}
-
-startBtn.onclick = start;
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>

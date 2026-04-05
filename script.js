@@ -6,6 +6,7 @@ const monthText = document.getElementById("monthText");
 const text = document.getElementById("text");
 const startBtn = document.getElementById("startBtn");
 
+/*  */
 let images = [];
 const months = [4,5,6,7,8,9,10,11,12,1,2,3];
 
@@ -17,6 +18,7 @@ months.forEach(month => {
 
 let index = 0;
 
+/*   */
 const monthNames = {
   4:"April 2025",
   5:"May 2025",
@@ -32,45 +34,56 @@ const monthNames = {
   3:"March 2026"
 };
 
-function getSpeed(){
-  if(index < 10) return 1200;
-  if(index < 40) return 250;
-  return 120;
+/*  */
+function getSpeed(month){
+  month = parseInt(month);
+  if(month >= 4 && month <= 8){
+    return 3500;
+  }
+  return 200;
 }
 
+/*  */
 function showEnding(){
 
-  image.src = "images/final.jpg";
-  image.classList.add("show");
+  image.src = "./final.jpg";
+  image.style.width = "500px";
+  image.style.opacity = 1;
 
   monthText.innerText = "";
 
   const lines = [
-    "NOHAâ€¦ it was all worth it ðŸ¤",
-    "and Iâ€™d do it all over again ðŸ¤",
-    "still feels like it all just startedâ€¦"
+    "NOHA… it was all worth it ",
+    "and I’d do it all over again ",
+    "still feels like it all just started…",
+    "untitled story is not begun yet"
   ];
 
   let i = 0;
 
   function showLine(){
+
     if(i >= lines.length) return;
 
     text.innerText = lines[i];
     text.style.opacity = 1;
 
     setTimeout(() => {
+
       text.style.opacity = 0;
+
       setTimeout(() => {
         i++;
         showLine();
-      }, 800);
-    }, 3000);
+      }, 1000);
+
+    }, 3500);
   }
 
   setTimeout(showLine, 1500);
 }
 
+/*   */
 function showImage(){
 
   if(index >= images.length){
@@ -78,32 +91,52 @@ function showImage(){
     return;
   }
 
-  const path = "images/" + images[index];
+  const path = "./" + images[index];
+  const temp = new Image();
 
-  image.classList.remove("show");
-
-  setTimeout(() => {
+  temp.onload = () => {
 
     image.src = path;
-    image.classList.add("show");
+    image.style.opacity = 0;
 
-    const file = images[index].split(".")[0];
-    const month = file.split("-")[1];
+    setTimeout(() => {
+      image.style.opacity = 1;
 
-    monthText.innerText = monthNames[month] || "";
+      const file = images[index].split(".")[0];
+      const month = file.split("-")[1];
 
-    notif.currentTime = 0;
-    notif.play().catch(()=>{});
+      monthText.innerText = monthNames[month] || "";
 
+      notif.currentTime = 0;
+      notif.play().catch(err => console.log("Notif error:", err));
+
+      const speed = getSpeed(month);
+
+      index++;
+      setTimeout(showImage, speed);
+
+    }, 100);
+
+  };
+
+  temp.onerror = () => {
     index++;
-    setTimeout(showImage, getSpeed());
+    showImage();
+  };
 
-  }, 100);
+  temp.src = path;
 }
 
+/*  */
 function start(){
-  video.play().catch(()=>{});
-  music.play().catch(()=>{});
+
+  video.muted = true;
+  video.play().catch(err => console.log("Video error:", err));
+
+  music.currentTime = 0;
+  music.loop = true; //    
+  music.play().catch(err => console.log("Music error:", err));
+
   showImage();
 }
 
